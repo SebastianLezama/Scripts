@@ -13,6 +13,7 @@ destination_folder_images = 'C:\\Users\\Sebastian Lezama\\Documents\\Images'
 destination_folder_pdf = 'C:\\Users\\Sebastian Lezama\\Documents\\PDFs'
 destination_folder_SW = 'C:\\Users\\Sebastian Lezama\\Documents\\Files'
 destination_folder_exel = 'C:\\Users\\Sebastian Lezama\\Documents\\Excels'
+destination_folder_scripts = 'C:\\Users\\Sebastian Lezama\\Documents\\Scripts'
 
 
 def makeUnique(path):
@@ -60,7 +61,10 @@ class MoverHandler(FileSystemEventHandler):
                     move(dest, entry, name)    
                 elif name.endswith(('.xls', '.xlsx', '.docx')):
                     dest = destination_folder_exel
-                    move(dest, entry, name)               
+                    move(dest, entry, name)
+                elif name.endswith(('.py', '.json')):
+                    dest = destination_folder_scripts
+                    move(dest, entry, name)        
 
 ## NO NEED TO CHANGE BELOW CODE
 if __name__ == "__main__":
