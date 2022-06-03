@@ -25,5 +25,9 @@ while ! $command && [ $n -le 5 ]; do
     echo "Retry #$n"
 done; echo $line
 
+for file in *.HTM; do
+    name=$(basename "$file" .HTM)
+    echo mv "$file" "$name.html"
+done
 
 echo "Finishing at: $(date)"
