@@ -30,4 +30,9 @@ for file in *.HTM; do
     echo mv "$file" "$name.html"
 done
 
+for logfile in /var/log/*log; do
+    echo "Processing: $logfile"
+    cut -d' ' -f5- $logfile | sort | uniq -c | sort -nr | head
+done; echo $line
+
 echo "Finishing at: $(date)"
