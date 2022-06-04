@@ -4,3 +4,8 @@ Dec 18 8:45:40,INFO,Created ticket ,7546,slezama
 Dec 18 11:45:40,INFO,Created ticket ,8764,slezama
 Aug 9 11:45:40,INFO,Created ticket ,8864,slezama
 Aug 9 17:45:40,INFO,Created ticket ,8798,rbm
+Jun 1 17:06:48,ERROR,Connection to DB failed,No ticket,username
+Jul 1 11:06:48,ERROR,Connection to DB failed,No ticket,username
+Jul 1 8:06:48,ERROR,Network problem,No ticket,slezama
+Feb 1 11:06:48,ERROR,Network problem,No ticket,slezama
+Feb 13 11:06:48,ERROR,Network problem,No ticket,rbm

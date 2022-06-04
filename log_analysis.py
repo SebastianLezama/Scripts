@@ -17,11 +17,11 @@ Use two scripts, but automate it.
 
 log_data = [
     "May 27 11:45:40 ubuntu.local ticky: INFO: Created ticket [#1234] (username)\n",
-    "Jun 1 11:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
+    "Jun 1 17:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
     "Dec 18 8:45:40 ubuntu.local ticky: INFO: Created ticket [#7546] (slezama)\n",
     "Jul 1 11:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
     "Dec 18 11:45:40 ubuntu.local ticky: INFO: Created ticket [#8764] (slezama)\n",
-    "Jul 1 11:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
+    "Jul 1 8:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
     "Aug 9 11:45:40 ubuntu.local ticky: INFO: Created ticket [#8864] (slezama)\n",
     "Feb 1 11:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
     "Aug 9 17:45:40 ubuntu.local ticky: INFO: Created ticket [#8798] (rbm)\n",
@@ -76,12 +76,8 @@ def parseErrorLog(file) -> None:
 
 
 def parseLog(file, name) -> None:
-    info_log = set()
-    error_log = {}
-
     info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
-    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
-
+    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) \((\w*)\)"
     with open(f"{name}.csv", 'w', newline= '') as f:
         # Writing columns to CSV file
         columns = ['date', 'type', 'info', 'ticket number', 'username']
@@ -89,7 +85,7 @@ def parseLog(file, name) -> None:
         writer.writerow(columns)
         with open(file) as log:
             for line in log:
-                # Parsing info by username
+                # Parsing info and writing to CSV
                 if "INFO" not in line:
                     continue
                 search_result = re.search(info_pattern, line)
@@ -102,6 +98,21 @@ def parseLog(file, name) -> None:
                     ]
                 writer = csv.writer(f)
                 writer.writerow(info)
+        with open(file) as log:
+            for line in log:
+                # Parsing errors and writing to CSV
+                if "ERROR" not in line:
+                    continue
+                search_errors = re.search(error_pattern, line)
+                error = [
+                    search_errors[1],
+                    search_errors[2],
+                    search_errors[3],
+                    'No ticket',
+                    search_errors[4]
+                    ]
+                writer = csv.writer(f)
+                writer.writerow(error)
         return 
 
 
@@ -112,7 +123,7 @@ def makeCsv(file, name) -> None:
         writer.writeheader()
         writer.writerow(file)
 
-def main():
+def main() -> None:
     writeLog(log_file)
     parseErrorLog(log_file)
     parseLog(log_file, 'sorted_info_log')
