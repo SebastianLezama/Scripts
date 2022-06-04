@@ -10,7 +10,7 @@ import csv
 
 """
 Extract ranking of errors report, from most common to least.
-User statistics report by username.
+User statistics report by username. Stating how many info or error msgs they listed.
 Use two scripts, but automate it.
 """
 
@@ -28,7 +28,7 @@ log_data = [
     "Feb 13 11:06:48 ubuntu.local ticky: ERROR: Network problem (rbm)\n",
 ]
 
-log_name = 'coursera_log.txt'
+log_file = 'coursera_log.txt'
 os.chdir('Documents\\Scripts')
 
 def writeLog(name) -> None:
@@ -38,37 +38,72 @@ def writeLog(name) -> None:
     return
 
 def parseInfoLog(file) -> None:
-    info_log = {}
+    info_log = []
+    columns = ['date', 'type', 'info', 'ticket number']
+    info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
     with open(file) as f:
         for line in f:
             # Parsing info by username
             if "INFO" not in line:
                 continue
-            info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z].*\w*)\[#(\d*)\] \((\w*)\)"
             search_result = re.search(info_pattern, line)
-            username = search_result[5]
-            info_log[username] = info_log.get(username, 0) + 1
+            row = 0
+            colum = 0
+            sr = 0
+            print(search_result[sr + 1])
+            for result in range(1, 4):
+                print(result)
+                print(columns[colum])
+                index = columns[colum]
+                info_log[result] = search_result[result]
+                row += 1
+
+
         return info_log
 
 def parseErrorLog(file) -> None:
     error_log = {}
+    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
     with open(file) as f:
         for line in f:
             # Parsing errors
             if "ERROR" not in line:
                 continue
-            error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): "#([A-Z][a-z].*\w*)]\[#(\d*)\]"
             search_errors = re.search(error_pattern, line)
-            print(search_errors)
-            print(search_errors[1])
-            print(search_errors[2])
-            print(search_errors[3])
+            error = search_errors[3]
+            error_log[error] = error_log.get(error, 0) + 1
+        return error_log
 
 
-            error = search_errors[2]
-            error_log[error] = search_errors[1, 3]
-    for i in sorted(error_log):
-        pass
+def parseLog(file, name) -> None:
+    info_log = set()
+    error_log = {}
+
+    info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
+    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
+
+    with open(f"{name}.csv", 'w', newline= '') as f:
+        # Writing columns to CSV file
+        columns = ['date', 'type', 'info', 'ticket number', 'username']
+        writer = csv.writer(f)
+        writer.writerow(columns)
+        with open(file) as log:
+            for line in log:
+                # Parsing info by username
+                if "INFO" not in line:
+                    continue
+                search_result = re.search(info_pattern, line)
+                info = [
+                    search_result[1],
+                    search_result[2],
+                    search_result[3],
+                    search_result[4],
+                    search_result[5]
+                    ]
+                writer = csv.writer(f)
+                writer.writerow(info)
+        return 
+
 
 def makeCsv(file, name) -> None:
     with open(f"{name}.csv", 'w', newline='') as f:
@@ -78,13 +113,14 @@ def makeCsv(file, name) -> None:
         writer.writerow(file)
 
 def main():
-    writeLog(log_name)
-    parseErrorLog(log_name)
-    makeCsv(sorted_info_log, 'sorted_info_log')
+    writeLog(log_file)
+    parseErrorLog(log_file)
+    parseLog(log_file, 'sorted_info_log')
     makeCsv(sorted_error_log, 'sorted_error_log')
 
-sorted_info_log = parseInfoLog(log_name)
-sorted_error_log = {}
+#sorted_info_log = parseLog(log_file)
+sorted_error_log = parseErrorLog(log_file)
+
 
 if __name__ == '__main__':
     main()
