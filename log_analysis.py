@@ -61,18 +61,6 @@ def parseInfoLog(file) -> None:
 
         return info_log
 
-def parseErrorLog(file) -> None:
-    error_log = {}
-    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
-    with open(file) as f:
-        for line in f:
-            # Parsing errors
-            if "ERROR" not in line:
-                continue
-            search_errors = re.search(error_pattern, line)
-            error = search_errors[3]
-            error_log[error] = error_log.get(error, 0) + 1
-        return error_log
 
 
 def parseLog(file, name) -> None:
@@ -100,7 +88,7 @@ def parseLog(file, name) -> None:
                 writer.writerow(info)
         with open(file) as log:
             for line in log:
-                # Parsing errors and writing to CSV
+                # Parsing errors and writing to CSV 
                 if "ERROR" not in line:
                     continue
                 search_errors = re.search(error_pattern, line)
@@ -115,22 +103,38 @@ def parseLog(file, name) -> None:
                 writer.writerow(error)
         return 
 
+def parseErrorLog(file, name) -> None:
+    error_log = {}
+    error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
+    with open(f"{name}.csv", 'w', newline='') as f:
+        columns = ['Problem', 'Occurrances']
+        writer = csv.writer(f)
+        writer.writerow(columns)
+        with open(file) as f:
+            for line in f:
+                # Parsing errors
+                if "ERROR" not in line:
+                    continue
+                search_errors = re.search(error_pattern, line)
+                error = search_errors[3]
+                error_log[error] = error_log.get(error, 0) + 1
+        return error_log
 
 def makeCsv(file, name) -> None:
     with open(f"{name}.csv", 'w', newline='') as f:
-        columns = ['Username', 'Entries']
-        writer = csv.DictWriter(f, fieldnames=file.keys())
-        writer.writeheader()
-        writer.writerow(file)
+        columns = ['Problem', 'Occurrances']
+        writer = csv.writer(f)
+        writer.writerow(columns)
+        fieldnames = ['Connection to DB failed', 'Network problem']
+        reader = csv.DictReader(file)
+        
+        for row in reader:
+            writer.writerow(row)
 
 def main() -> None:
     writeLog(log_file)
-    parseErrorLog(log_file)
     parseLog(log_file, 'sorted_info_log')
-    makeCsv(sorted_error_log, 'sorted_error_log')
-
-#sorted_info_log = parseLog(log_file)
-sorted_error_log = parseErrorLog(log_file)
+    parseErrorLog(log_file, 'sorted_error_log')
 
 
 if __name__ == '__main__':
