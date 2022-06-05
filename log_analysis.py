@@ -9,13 +9,6 @@ import os
 import csv
 
 
-"""
-Extract ranking of errors report, from most common to least.
-User statistics report by username. Stating how many info or error msgs they listed.
-Use two scripts, but automate it.
-"""
-
-
 log_data = [
     "May 27 11:45:40 ubuntu.local ticky: INFO: Created ticket [#1234] (username)\n",
     "Jun 1 17:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
@@ -37,34 +30,17 @@ def writeLog(name) -> None:
             file.write(log)
     return
 
-def parseInfoLog(file) -> None:
-    info_log = []
-    columns = ['date', 'type', 'info', 'ticket number']
-    info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
-    with open(file) as f:
-        for line in f:
-            # Parsing info by username
-            if "INFO" not in line:
-                continue
-            search_result = re.search(info_pattern, line)
-            row = 0
-            colum = 0
-            sr = 0
-            print(search_result[sr + 1])
-            for result in range(1, 4):
-                print(result)
-                print(columns[colum])
-                index = columns[colum]
-                info_log[result] = search_result[result]
-                row += 1
-        return info_log
+"""
+Extract ranking of errors report, from most common to least.
+User statistics report by username. Stating how many info or error msgs they listed.
+Use two scripts, but automate it.
+"""
 
 def parseLog(file, name) -> None:
     info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
     error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) \((\w*)\)"
     big_list = []
-    with open(f"{name}.csv", 'w', newline= '') as f:
-        # Writing columns to CSV file
+    with open(f"{name}.csv", 'w', newline= '') as f: # Writing columns to CSV file
         columns = ['username', 'type', 'info', 'ticket number', 'date']
         writer = csv.writer(f)
         writer.writerow(columns)
@@ -83,8 +59,7 @@ def parseLog(file, name) -> None:
                     ]
                 big_list.append(info)
         with open(file) as log:
-            for line in log:
-                # Parsing errors and writing to CSV 
+            for line in log: # Parsing errors and writing to CSV 
                 if "ERROR" not in line:
                     continue
                 search_errors = re.search(error_pattern, line)
@@ -109,8 +84,7 @@ def parseErrorLog(file, name) -> None:
         writer = csv.writer(f)
         writer.writerow(columns)
         with open(file) as f:
-            for line in f:
-                # Parsing errors
+            for line in f: # Parsing errors
                 if "ERROR" not in line:
                     continue
                 search_errors = re.search(error_pattern, line)
@@ -121,7 +95,6 @@ def parseErrorLog(file, name) -> None:
             writer.writerow([key, value])
 
 def main() -> None:
-    writeLog(log_file)
     parseLog(log_file, 'sorted_info_log')
     parseErrorLog(log_file, 'sorted_error_log')
 
