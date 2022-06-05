@@ -119,9 +119,7 @@ def parseErrorLog(file, name) -> None:
                 print(search_errors)
                 error = search_errors[3]
                 error_log[error] = error_log.get(error, 0) + 1
-        print(error_log)
         sort = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
-        print(sort)
         for key, value in error_log.items():
             writer.writerow([key, value])
 
