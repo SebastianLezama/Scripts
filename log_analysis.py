@@ -7,7 +7,8 @@
 import re
 import os
 import csv
-
+from collections import Counter
+import pandas as pd
 
 log_data = [
     "May 27 11:45:40 ubuntu.local ticky: INFO: Created ticket [#1234] (username)\n",
@@ -24,23 +25,25 @@ log_data = [
 log_file = 'coursera_log.txt'
 os.chdir('Documents\\Scripts')
 
-def writeLog(name) -> None:
+def writeLog(name) -> None: # Writes the log text into a .txt
     with open(name, 'w') as file:
         for log in log_data:
             file.write(log)
     return
 
 """
-Extract ranking of errors report, from most common to least.
-User statistics report by username. Stating how many info or error msgs they listed.
+Extract ranking of errors report, from most common to least. YES
+User statistics report by username. YES. Stating how many info or error msgs they listed.
 Use two scripts, but automate it.
 """
 
-def parseLog(file, name) -> None:
+def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
     info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
     error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) \((\w*)\)"
     big_list = []
-    with open(f"{name}.csv", 'w', newline= '') as f: # Writing columns to CSV file
+    entry_log = []
+    new_list = []
+    with open(f"{name}.csv", 'w', newline='') as f: # Writing columns to CSV file
         columns = ['username', 'type', 'info', 'ticket number', 'date']
         writer = csv.writer(f)
         writer.writerow(columns)
@@ -58,6 +61,11 @@ def parseLog(file, name) -> None:
                     search_result[1]
                     ]
                 big_list.append(info)
+                info_count = [
+                    search_result[5],
+                    search_result[2]
+                    ]
+                entry_log.append(info_count)
         with open(file) as log:
             for line in log: # Parsing errors and writing to CSV 
                 if "ERROR" not in line:
@@ -71,12 +79,28 @@ def parseLog(file, name) -> None:
                     search_errors[1]
                     ]
                 big_list.append(error)
-                writer = csv.writer(f)
+                error_count = [
+                    search_errors[4],
+                    search_errors[2]
+                    ]
+                entry_log.append(error_count)
+            writer = csv.writer(f)
+            # Make a list of entries, then count them, append count and write to csv
+            entry_log = pd.Series(entry_log).value_counts().reset_index().values.tolist()
+            for i in entry_log: # iterate through items to append count and make a new list
+                i[0].append(i[1])
+                new_list.append(i[0])
+                new_list.sort(key=lambda x: x[0])
+            with open("entry_log.csv", 'w', newline='') as entry:
+                error_writer = csv.writer(entry)
+                for i in new_list:
+                    error_writer.writerow(i)
             big_list.sort(key=lambda x: x[0])
             for item in big_list:
                 writer.writerow(item)
+                
 
-def parseErrorLog(file, name) -> None:
+def parseErrorLog(file, name) -> None: # Parses log file and counts error msgs into a CSV
     error_log = {}
     error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) "
     with open(f"{name}.csv", 'w', newline='') as f:
