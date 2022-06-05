@@ -1,13 +1,13 @@
-# Parse log file with regex into a dictionary
-# Sort dict according to specs
-# Write to a file in csv format
+# Parse log file with regex into a dictionary YES
+# Sort dict according to specs YES
+# Write to a file in csv format YES
 # Move file to different directory
 # call csv_to_html.py with bash passing name_of_csv and name_of_html file to generate
 
 import re
 import os
 import csv
-from operator import itemgetter
+
 
 """
 Extract ranking of errors report, from most common to least.
@@ -57,11 +57,7 @@ def parseInfoLog(file) -> None:
                 index = columns[colum]
                 info_log[result] = search_result[result]
                 row += 1
-
-
         return info_log
-
-
 
 def parseLog(file, name) -> None:
     info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
@@ -102,7 +98,6 @@ def parseLog(file, name) -> None:
                 big_list.append(error)
                 writer = csv.writer(f)
             big_list.sort(key=lambda x: x[0])
-            print(big_list)
             for item in big_list:
                 writer.writerow(item)
 
@@ -124,7 +119,6 @@ def parseErrorLog(file, name) -> None:
         error_log = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
         for key, value in error_log.items():
             writer.writerow([key, value])
-
 
 def main() -> None:
     writeLog(log_file)
