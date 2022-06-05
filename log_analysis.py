@@ -69,7 +69,7 @@ def parseLog(file, name) -> None:
     big_list = []
     with open(f"{name}.csv", 'w', newline= '') as f:
         # Writing columns to CSV file
-        columns = ['date', 'type', 'info', 'ticket number', 'username']
+        columns = ['username', 'type', 'info', 'ticket number', 'date']
         writer = csv.writer(f)
         writer.writerow(columns)
         with open(file) as log:
@@ -79,11 +79,11 @@ def parseLog(file, name) -> None:
                     continue
                 search_result = re.search(info_pattern, line)
                 info = [
-                    search_result[1],
+                    search_result[5],
                     search_result[2],
                     search_result[3],
                     search_result[4],
-                    search_result[5]
+                    search_result[1]
                     ]
                 big_list.append(info)
         with open(file) as log:
@@ -93,15 +93,15 @@ def parseLog(file, name) -> None:
                     continue
                 search_errors = re.search(error_pattern, line)
                 error = [
-                    search_errors[1],
+                    search_errors[4],
                     search_errors[2],
                     search_errors[3],
                     'No ticket',
-                    search_errors[4]
+                    search_errors[1]
                     ]
                 big_list.append(error)
                 writer = csv.writer(f)
-            big_list.sort(key=lambda x: x[4])
+            big_list.sort(key=lambda x: x[0])
             print(big_list)
             for item in big_list:
                 writer.writerow(item)
