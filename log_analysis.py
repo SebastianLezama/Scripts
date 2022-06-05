@@ -20,6 +20,8 @@ log_data = [
     "Feb 1 11:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
     "Aug 9 17:45:40 ubuntu.local ticky: INFO: Created ticket [#8798] (rbm)\n",
     "Feb 13 11:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (rbm)\n",
+    "Nov 27 11:03:03 ubuntu.local ticky: INFO: Created ticket [#1333] (rbm)\n",
+
 ]
 
 log_file = 'coursera_log.txt'
@@ -121,6 +123,7 @@ def parseErrorLog(file, name) -> None: # Parses log file and counts error msgs i
             writer.writerow([key, value])
 
 def main() -> None:
+    writeLog(log_file)
     parseLog(log_file, 'sorted_info_log')
     parseErrorLog(log_file, 'sorted_error_log')
 
