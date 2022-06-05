@@ -7,6 +7,7 @@
 import re
 import os
 import csv
+from operator import itemgetter
 
 """
 Extract ranking of errors report, from most common to least.
@@ -20,7 +21,6 @@ log_data = [
     "Jun 1 17:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
     "Dec 18 8:45:40 ubuntu.local ticky: INFO: Created ticket [#7546] (slezama)\n",
     "Jul 1 11:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (username)\n",
-    "Dec 18 11:45:40 ubuntu.local ticky: INFO: Created ticket [#8764] (slezama)\n",
     "Jul 1 8:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
     "Aug 9 11:45:40 ubuntu.local ticky: INFO: Created ticket [#8864] (slezama)\n",
     "Feb 1 11:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
@@ -66,6 +66,7 @@ def parseInfoLog(file) -> None:
 def parseLog(file, name) -> None:
     info_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(INFO): ([A-Z][a-z]*.*\w*)\[#(\d*)\] \((\w*)\)"
     error_pattern = r"^([A-Z][a-z]* \d{,2} \d*:\d{2}:\d{2}).*\w*(ERROR): ([A-Z][a-z]*.*\w*) \((\w*)\)"
+    big_list = []
     with open(f"{name}.csv", 'w', newline= '') as f:
         # Writing columns to CSV file
         columns = ['date', 'type', 'info', 'ticket number', 'username']
@@ -84,8 +85,7 @@ def parseLog(file, name) -> None:
                     search_result[4],
                     search_result[5]
                     ]
-                writer = csv.writer(f)
-                writer.writerow(info)
+                big_list.append(info)
         with open(file) as log:
             for line in log:
                 # Parsing errors and writing to CSV 
@@ -99,9 +99,12 @@ def parseLog(file, name) -> None:
                     'No ticket',
                     search_errors[4]
                     ]
+                big_list.append(error)
                 writer = csv.writer(f)
-                writer.writerow(error)
-        return 
+            big_list.sort(key=lambda x: x[4])
+            print(big_list)
+            for item in big_list:
+                writer.writerow(item)
 
 def parseErrorLog(file, name) -> None:
     error_log = {}
@@ -116,12 +119,12 @@ def parseErrorLog(file, name) -> None:
                 if "ERROR" not in line:
                     continue
                 search_errors = re.search(error_pattern, line)
-                print(search_errors)
                 error = search_errors[3]
                 error_log[error] = error_log.get(error, 0) + 1
-        sort = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
+        error_log = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
         for key, value in error_log.items():
             writer.writerow([key, value])
+
 
 def main() -> None:
     writeLog(log_file)
