@@ -44,7 +44,7 @@ def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
     entry_log = []
     new_list = []
     with open(f"{name}.csv", 'w', newline='') as f: # Writing columns to CSV file
-        columns = ['username', 'type', 'info', 'ticket number', 'date']
+        columns = ['User', 'Type', 'Info', 'Ticket number', 'Date']
         writer = csv.writer(f)
         writer.writerow(columns)
         with open(file) as log:
@@ -92,7 +92,9 @@ def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
                 new_list.append(i[0])
                 new_list.sort(key=lambda x: x[0])
             with open("entry_log.csv", 'w', newline='') as entry:
+                columns = ['User', 'Entry', 'Occurrances']
                 error_writer = csv.writer(entry)
+                error_writer.writerow(columns)
                 for i in new_list:
                     error_writer.writerow(i)
             big_list.sort(key=lambda x: x[0])
