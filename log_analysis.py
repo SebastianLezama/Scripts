@@ -25,7 +25,7 @@ log_data = [
     "Aug 9 11:45:40 ubuntu.local ticky: INFO: Created ticket [#8864] (slezama)\n",
     "Feb 1 11:06:48 ubuntu.local ticky: ERROR: Network problem (slezama)\n",
     "Aug 9 17:45:40 ubuntu.local ticky: INFO: Created ticket [#8798] (rbm)\n",
-    "Feb 13 11:06:48 ubuntu.local ticky: ERROR: Network problem (rbm)\n",
+    "Feb 13 11:06:48 ubuntu.local ticky: ERROR: Connection to DB failed (rbm)\n",
 ]
 
 log_file = 'coursera_log.txt'
@@ -116,20 +116,14 @@ def parseErrorLog(file, name) -> None:
                 if "ERROR" not in line:
                     continue
                 search_errors = re.search(error_pattern, line)
+                print(search_errors)
                 error = search_errors[3]
                 error_log[error] = error_log.get(error, 0) + 1
-        return error_log
-
-def makeCsv(file, name) -> None:
-    with open(f"{name}.csv", 'w', newline='') as f:
-        columns = ['Problem', 'Occurrances']
-        writer = csv.writer(f)
-        writer.writerow(columns)
-        fieldnames = ['Connection to DB failed', 'Network problem']
-        reader = csv.DictReader(file)
-        
-        for row in reader:
-            writer.writerow(row)
+        print(error_log)
+        sort = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
+        print(sort)
+        for key, value in error_log.items():
+            writer.writerow([key, value])
 
 def main() -> None:
     writeLog(log_file)

@@ -8,4 +8,4 @@ Jun 1 17:06:48,ERROR,Connection to DB failed,No ticket,username
 Jul 1 11:06:48,ERROR,Connection to DB failed,No ticket,username
 Jul 1 8:06:48,ERROR,Network problem,No ticket,slezama
 Feb 1 11:06:48,ERROR,Network problem,No ticket,slezama
-Feb 13 11:06:48,ERROR,Network problem,No ticket,rbm
+Feb 13 11:06:48,ERROR,Connection to DB failed,No ticket,rbm
