@@ -27,6 +27,7 @@ log_data = [
 log_file = 'coursera_log.txt'
 os.chdir('Documents\\Scripts')
 
+
 def writeLog(name) -> None: # Writes the log text into a .txt
     with open(name, 'w') as file:
         for log in log_data:
@@ -87,7 +88,6 @@ def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
                     ]
                 entry_log.append(error_count)
             writer = csv.writer(f)
-            # Make a list of entries, then count them, append count and write to csv
             entry_log = pd.Series(entry_log).value_counts().reset_index().values.tolist()
             for i in entry_log: # iterate through items to append count and make a new list
                 i[0].append(i[1])
@@ -102,7 +102,7 @@ def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
             big_list.sort(key=lambda x: x[0])
             for item in big_list:
                 writer.writerow(item)
-                
+
 
 def parseErrorLog(file, name) -> None: # Parses log file and counts error msgs into a CSV
     error_log = {}
@@ -121,6 +121,7 @@ def parseErrorLog(file, name) -> None: # Parses log file and counts error msgs i
         error_log = dict(sorted(error_log.items(), key=lambda item: item[1], reverse=True))
         for key, value in error_log.items():
             writer.writerow([key, value])
+
 
 def main() -> None:
     writeLog(log_file)
