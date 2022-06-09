@@ -92,7 +92,7 @@ def parseLog(file, name) -> None: # Parses log file into a detailed CSV file
             for i in entry_log: # iterate through items to append count and make a new list
                 i[0].append(i[1])
                 new_list.append(i[0])
-                new_list.sort(key=lambda x: x[0])
+            new_list.sort(key=lambda x: x[0])
             with open("entry_log.csv", 'w', newline='') as entry:
                 columns = ['User', 'Entry', 'Occurrances']
                 error_writer = csv.writer(entry)
