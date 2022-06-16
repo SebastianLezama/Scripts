@@ -4,9 +4,9 @@ def search(arr, target):
     while left <= right:
         mid = (left + right) // 2 # make sure to round it down
         if arr[mid] == target:
-	        return mid
+            return mid
         elif target < arr[mid]:
-	        right = mid - 1
+            right = mid - 1
         else:
             left = mid + 1
     return -1
